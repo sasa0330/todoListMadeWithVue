@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>TODOリスト</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  </head>
+  <body>
+    <h1>メモ帳（追加＋閉じ＋削除＋保存）</h1>
+    <div id="app">
+      <ul class="todo-list">
+        <li v-for="(todo, index) in todos" :key="todo">
+          <label>
+            <input
+              type="checkbox"
+              @click="saveCheckState(index);"
+              v-model="todo.isCheck"
+              class="todo-list_checkbox"
+              hidden
+            />
+            <span class="todo-list_item">{{todo.item}}</span>
+          </label>
+          <button @click="deleteItem(index);">削除</button>
+        </li>
+      </ul>
+      <div v-if="isShowModal" class="modal">
+        <a
+          href="https://github.com/sasa0330/todoListMadeWithVue/blob/master/todo.html"
+          target="_brank"
+          >そーすこーど</a
+        >
+        <p @click="isShowModal = !isShowModal">close</p>
+      </div>
+      <input type="text" v-model="inputAdd" placeholder="edit me" />
+      <button @click="addItem">追加</button>
+    </div>
+    <script>
+      const _this = this;
+      var app = new Vue({
+        el: "#app",
+        data: {
+          inputAdd: "",
+          todos: [],
+          isShowModal: false
+        },
+        created: function() {
+          var jsonObj = localStorage.getItem("todosKey");
+          var jsObj = JSON.parse(jsonObj);
+          for (var i = 0; i < jsObj.length; i++) {
+            var todo = {
+              item: jsObj[i].item,
+              isCheck: jsObj[i].isCheck
+            };
+            console.log(JSON.stringify(todo));
+            this.todos.push(todo);
+          }
+        },
+        methods: {
+          addItem() {
+            if (this.inputAdd == "") {
+              return;
+            }
+            this.optionHowTo(this.inputAdd);
+
+            var todo = {
+              item: this.inputAdd,
+              isCheck: false
+            };
+            this.todos.push(todo);
+            this.inputLocalStrage();
+            this.inputAdd = "";
+          },
+          deleteItem(index) {
+            this.todos.splice(index, 1);
+            this.inputLocalStrage();
+          },
+          saveCheckState(index) {
+            if (this.todos[index].isCheck) {
+              this.todos[index].isCheck = false;
+            } else {
+              this.todos[index].isCheck = true;
+            }
+            console.log(JSON.stringify(this.todos[index]));
+            this.inputLocalStrage();
+          },
+          inputLocalStrage() {
+            //ここのタイミングでセッションストレージに格納
+            var obj = JSON.stringify(this.todos);
+            localStorage.setItem("todosKey", obj);
+          },
+          optionHowTo(inputAdd) {
+            if (inputAdd === "HowToMake" || inputAdd === "はうつーめいく") {
+              this.isShowModal = true;
+            }
+          }
+        }
+      });
+    </script>
+    <style>
+      .todo-list {
+        list-style-type: none;
+      }
+      .todo-list li .todo-list_checkbox:checked + .todo-list_item {
+        text-decoration: line-through;
+      }
+      .modal {
+        border: solid 1px #000;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%);
+        transform: translateY(-50%);
+      }
+    </style>
+  </body>
+</html>
