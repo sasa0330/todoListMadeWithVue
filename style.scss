@@ -1,0 +1,27 @@
+@import url("./reset.css");
+
+header {
+  padding: 10px;
+}
+.todo-list {
+  padding: 10px;
+  .todo-list_content {
+    border-bottom: solid 1px #ddd;
+    padding: 5px 0;
+  }
+  .todo-list_checkbox:checked + .todo-list_item {
+    text-decoration: line-through;
+  }
+}
+.text-input-area {
+  padding: 10px;
+}
+
+.modal {
+  border: solid 1px #000;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  transform: translateY(-50%);
+}
